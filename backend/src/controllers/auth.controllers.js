@@ -125,6 +125,28 @@ export const login = async (req, res) => {
 };
 
 
+/**
+ * Log the user out by invalidating the JWT cookie.
+ *
+ * @route   POST /api/auth/logout
+ * @access  Public
+ *
+ * @param {import('express').Request}  req – Incoming request object.
+ * @param {import('express').Response} res – Express response object.
+ */
 export const logout = (req, res) => {
-  res.send("logout route");
-} 
+  try {
+    // Clear the auth cookie:
+    // • Set an empty value.
+    // • maxAge 0 forces the browser to delete it immediately.
+    res.cookie("jwt", "", { maxAge: 0 });
+
+    // Confirm logout to the client.
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    // Surface error details internally; keep the client response generic.
+    console.error("Logout controller error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
