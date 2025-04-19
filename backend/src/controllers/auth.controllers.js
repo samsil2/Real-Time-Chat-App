@@ -74,9 +74,56 @@ export const signup = async (req, res) => {
 };
 
 
-export const login = (req, res) => {
-  res.send("login route");
-} 
+/**
+ * Authenticate an existing user and issue a JWT cookie for login
+ *
+ * @route   POST /api/auth/login
+ * @access  Public
+ *
+ * @param {import('express').Request}  req – Expects { email, password } in the body.
+ * @param {import('express').Response} res – Returns user payload + “jwt” cookie on success.
+ */
+export const login = async (req, res) => {
+  const { email, password } = req.body; // Credentials supplied by the client
+
+  try {
+    /* ------------------------------------------------------------------ */
+    /* 1. Locate user by e‑mail                                           */
+    /* ------------------------------------------------------------------ */
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 2. Verify password                                                 */
+    /* ------------------------------------------------------------------ */
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* 3. Issue JWT cookie                                                */
+    /* ------------------------------------------------------------------ */
+    generateToken(user._id, res);
+
+    /* ------------------------------------------------------------------ */
+    /* 4. Success response (password omitted)                             */
+    /* ------------------------------------------------------------------ */
+    return res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePic: user.profilePic,
+    });
+  } catch (error) {
+    // Log the raw error for internal debugging; send generic message to client.
+    console.error("Login controller error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 
 export const logout = (req, res) => {
   res.send("logout route");
