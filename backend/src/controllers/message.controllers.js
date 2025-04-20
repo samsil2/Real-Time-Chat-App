@@ -52,21 +52,55 @@ export const getUsersForSidebar = async (req, res) => {
 };
 
 
+/**
+ * GET /api/messages/:id
+ * -----------------------------------------------------------------------------
+ * Fetches the full message history between the authenticated user (`req.user`)
+ * and the user specified by route param `:id`.
+ *
+ * Business rules
+ * --------------
+ * • Both inbound and outbound messages are returned, ordered by default index.
+ * • No pagination is applied; callers should layer their own limits if needed.
+ *
+ * Response contract
+ * -----------------
+ * • 200 OK      – Array<Message>
+ * • 500 INTERNAL – Generic error message; details are logged server‑side.
+ *
+ * Security
+ * --------
+ * • Endpoint must be protected by authentication middleware that populates
+ *   `req.user`; otherwise, access is denied at an earlier layer.
+ */
 export const getMessages = async (req, res) => {
   try {
-    const { id: userToChatId } = req.params;
-    const myId = req.user._id;
+    /* ---------------------------------------------------------------
+     * 1. Determine conversation participants
+     * ------------------------------------------------------------- */
+    const { id: userToChatId } = req.params; // User we’re chatting with
+    const myId = req.user._id;               // Authenticated caller
 
+    /* ---------------------------------------------------------------
+     * 2. Query for all messages where (me → them) OR (them → me)
+     * ------------------------------------------------------------- */
     const messages = await Message.find({
       $or: [
-        { senderId: myId, receiverId: userToChatId },
-        { senderId: userToChatId, receiverId: myId },
+        { senderId: myId,        receiverId: userToChatId },
+        { senderId: userToChatId, receiverId: myId       },
       ],
     });
 
-    res.status(200).json(messages);
+    /* ---------------------------------------------------------------
+     * 3. Return the conversation to the client
+     * ------------------------------------------------------------- */
+    return res.status(200).json(messages);
   } catch (error) {
-    console.log("Error in getMessages controller: ", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    /* ---------------------------------------------------------------
+     * 4. Log internal error and send generic failure response
+     * ------------------------------------------------------------- */
+    console.error("Error in getMessages controller:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
