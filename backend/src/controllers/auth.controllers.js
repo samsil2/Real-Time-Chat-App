@@ -195,3 +195,31 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+/**
+ * Verify authentication status and return user details.
+ *
+ * @route   GET /api/auth/check
+ * @access  Private
+ *
+ * @param {import('express').Request} req
+ *   • req.user: populated by authentication middleware with the current user’s ID.
+ * @param {import('express').Response} res
+ *   • 200: Returns the full user object (excluding sensitive fields).
+ *   • 500: “Internal server error” on unexpected failures.
+ *
+ * Workflow:
+ * 1. Verify user is authenticated via middleware.
+ * 2. Return the current user object to the client.
+ */
+
+export const checkAuth = (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    console.log("Error in checkAuth controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
