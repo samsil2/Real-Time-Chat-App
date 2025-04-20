@@ -150,3 +150,47 @@ export const logout = (req, res) => {
   }
 };
 
+
+/**
+ * Update the authenticated user’s profile picture.
+ *
+ * @route   PUT /api/user/profile
+ * @access  Private
+ *
+ * @param {import('express').Request} req
+ *   • req.user: populated by authentication middleware with the current user’s ID.
+ *   • req.body.profilePic: required image data (URL, file path, or Base64 string).
+ * @param {import('express').Response} res
+ *   • 200: Returns the full updated user object (excluding sensitive fields).
+ *   • 400: “Profile pic is required” if no image data is provided.
+ *   • 500: “Internal server error” on unexpected failures.
+ *
+ * Workflow:
+ * 1. Validate presence of profilePic in the request body.
+ * 2. Upload image to Cloudinary and obtain a secure URL.
+ * 3. Persist the new profilePic URL to the user record in MongoDB.
+ * 4. Return the updated user document to the client.
+ */
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { profilePic } = req.body;
+    const userId = req.user._id;
+
+    if (!profilePic) {
+      return res.status(400).json({ message: "Profile pic is required" });
+    }
+
+    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profilePic: uploadResponse.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("error in update profile:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
