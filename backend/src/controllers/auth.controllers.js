@@ -125,6 +125,7 @@ export const login = async (req, res) => {
 };
 
 
+
 /**
  * Log the user out by invalidating the JWT cookie.
  *
