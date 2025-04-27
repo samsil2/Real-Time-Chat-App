@@ -28,7 +28,7 @@ const App = () => {
     );
 
   return (
-    <div>
+    <div >
       <Navbar />
 
       <Routes>
