@@ -3,6 +3,7 @@ import useAuthStore from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 import { useState } from "react";
 
+
 const ProfilePage = () => {
 
   const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();

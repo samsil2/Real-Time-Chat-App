@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import {axiosInstance} from "../lib/axios";
+import {axiosInstance}from "../lib/axios.js";
 import React from "react";
 import toast from "react-hot-toast";
 
