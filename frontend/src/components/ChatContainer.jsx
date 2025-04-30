@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Sidebar = () => {
+const ChatContainer = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const Sidebar = () => {
   )
 }
 
-export default Sidebar
+export default ChatContainer
