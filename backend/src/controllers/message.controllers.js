@@ -1,6 +1,7 @@
 
 import User from "../models/user.models.js";
 import Message from "../models/message.models.js";
+import cloudinary from "../lib/cloudinary.js";
 
 
 /**
