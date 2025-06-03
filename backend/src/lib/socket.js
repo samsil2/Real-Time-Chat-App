@@ -12,13 +12,6 @@ const io = new Server(server, {
   },
 });
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Given a user ID, returns the socket ID of the corresponding connected user.
- * @param {string} userId - ID of the user to look up
- * @returns {string|null} socket ID if found, null otherwise
- */
-/*******  49c7a3ea-5b43-4771-8693-e79d75c38fbc  *******/
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
