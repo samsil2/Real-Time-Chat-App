@@ -113,6 +113,10 @@ connectSocket: () =>{
 
   set({ socket: socket });
 
+  socket.on("getOnlineUsers", (userIds) => {
+    set({ onlineUsers: userIds });
+  });
+
 },
 
 //disconnect socket
