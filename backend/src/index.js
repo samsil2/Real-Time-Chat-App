@@ -22,8 +22,8 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
+    // methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    // allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -41,7 +41,6 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
-
 
 server.listen(PORT, () => {
   console.log("server is running on PORT:" + PORT);
